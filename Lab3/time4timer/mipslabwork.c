@@ -17,8 +17,10 @@
 int mytime = 0x5957;
 
 char textstring[] = "text, more text, and even more text!";
+volatile int *trisE;
+volatile int *portE;
 
-int timeout = 0; //global bariable for timeoutcount
+int timeoutcount = 0; //global bariable for timeoutcount
 
 /* Interrupt Service Routine */
 void user_isr( void )
@@ -35,22 +37,23 @@ void labinit( void )
   *trisE = *trisE & 0xffffff00; // LSB 0 means output PORTE
 
   //d
-  port_E = (volatile int*) 0xbf886110; // Address of PORTE register
-  *port_E = 0x00000000; // allt släckt
+  portE = (volatile int*) 0xbf886110; // Address of PORTE register
+  *portE = 0x00000000; // allt släckt
 
   // e)
   TRISD = TRISD | 0x0fe0; // OR to keep values at 11-5 bits 
   //0000 1111 1110 0000 bit 5 to 11 are input (1) och resten unchanged
-  return;
-
+  
 
   //assignment 2a
-  T2CON= 0x00; // ON bit 0 to stop the clocl
-  T2CONSET= 0x70; // 0111 000 indikerar prescaling 1:256 så biytar 4-6 är prescaling bits
-  PR2= ((80000000/256)/10);
-  T2CONSET= 0x8000;// start the time bu set ON to 1   1000
-
-
+  TMR2 = 0; //T2CON= 0x00; // ON bit 0 to stop the clocl
+  PR2= ((80000000/256)/10); //1:256 deciding how fast the timer should tick
+                                //The division by 10 is to convert the frequency 
+                                //into a period of 100 milliseconds.
+  T2CON = 0x8070; //T2CONSET= 0x70; // 0111 000 indikerar
+                                  // prescaling 1:256 så biytar 4-6 är prescaling bits
+  //T2CONSET= 0x8000;// start the time bu set ON to 1   1000
+return;
 }
 
 
@@ -79,8 +82,8 @@ void labwork( void )
     IFSCLR(0) = 0x100; //clear the flag
   }
 
-  if (timeoutcount==10){ //every 10th interrupt
-    delay( 1000 );
+  if (timeoutcount==10){ //every 10th interrupt , om 10 times per econ sätt timecount ==1
+    //delay( 1000 );
     time2string( textstring, mytime );
     display_string( 3, textstring );
     display_update();
