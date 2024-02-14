@@ -17,6 +17,8 @@
 int mytime = 0x5957;
 
 char textstring[] = "text, more text, and even more text!";
+volatile int *trisE;
+volatile int *portE;
 
 /* Interrupt Service Routine */
 void user_isr( void )
@@ -33,8 +35,8 @@ void labinit( void )
   *trisE = *trisE & 0xffffff00; // LSB 0 means output PORTE
 
   //d
-  port_E = (volatile int*) 0xbf886110; // Address of PORTE register
-  *port_E = 0x00000000; // allt släckt
+  portE = (volatile int*) 0xbf886110; // Address of PORTE register
+  *portE = 0x00000000; // allt släckt
 
   // e)
   TRISD = TRISD | 0x0fe0; // OR to keep values at 11-5 bits 
@@ -45,6 +47,21 @@ void labinit( void )
 /* This function is called repetitively from the main program */
 void labwork( void )
 {
+  //d
+  //volatile int mytime=0x0000;
+  //*PORTE= mytime & 0xFF;
+  static int count = 0;
+
+  delay( 1000 );
+  time2string( textstring, mytime );
+  display_string( 3, textstring );
+  display_update();
+  tick( &mytime );
+  count++;
+  *portE = count;
+  display_image(96, icon);
+
+
   int switches = getsw();
 	int buttons = getbtns(); //0000 0000 1110 0000===0000 0000 0000 0111
 
@@ -63,15 +80,4 @@ void labwork( void )
     mytime = mytime & 0x0fff;
     mytime = (switches << 12) | mytime;
   }
-
-  //d
-  volatile int mytime=0x0000;
-  *PORTE= mytime & 0xFF;
-
-  delay( 1000 );
-  time2string( textstring, mytime );
-  display_string( 3, textstring );
-  display_update();
-  tick( &mytime );
-  display_image(96, icon);
 }
