@@ -56,12 +56,13 @@ void labinit( void )
   // e)
   TRISD = TRISD | 0x0fe0; // OR to keep values at 11-5 bits 
   //0000 1111 1110 0000 bit 5 to 11 are input (1) och resten unchanged
-  return;
+  
 
 
   //assignment 2a
-  T2CON= 0x00; // ON bit 0 to stop the clocl
+  T2CON= 0x00; // ON bit 0 to stop the clock
   T2CONSET= 0x70; // 0111 000 indikerar prescaling 1:256 så biytar 4-6 är prescaling bits
+  TMR2=0x0; //start counting from 0 when enabled
   PR2= ((80000000/256)/10);
   T2CONSET= 0x8000;// start the time bu set ON to 1   1000
 
@@ -76,10 +77,7 @@ void labinit( void )
   // priotity är bit 4-2 0001 1100 and subpriority är bit 1-0 11
   // 0001 1111
   enable_interrupts(); //  IECSET= 0x1F; enables alla interrupt
-
-
-
-
+return;
 }
 
 
