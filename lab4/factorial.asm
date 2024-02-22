@@ -1,5 +1,5 @@
 # Initialize
-	addi 	$a0, $zero, 5		# n
+	addi 	$a0, $zero, 3		# n
 	add 	$a1, $a0, $zero		# a1 & a2 used for conting in the loops
 	add	$a2, $a0, $zero
 	add	$a3, $a0, $zero
@@ -7,6 +7,7 @@
 # Main factorial function
 	beq	$a0, $zero, Zero	# Guard for 0!
 	add	$v0, $a0, $zero		# Value out is initially the argument
+	syscall
 OuterLoop:
 	addi	$a1, $a1, -1
 	beq	$a1, 1, Stop
