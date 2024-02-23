@@ -1,0 +1,19 @@
+
+	addi 	$a0, $zero, 3	# n
+	
+# ************* F A C T O R I A L ************************
+	beq	$a0, $zero, ifZero # 0!=1
+	add	$v0, $a0, $zero	
+	add    $a1, $a0, $0
+	
+factorial:
+	addi	$a1, $a1, -1 
+	beq	$a1, 1, Stop
+	mul	$v0, $a1, $v0 #factorial
+	beq	$0, $0, $factorial
+
+ifZero:
+	addi	$v0, $zero, 1
+Stop:
+	beq	$0, $0, Stop
+	nop
